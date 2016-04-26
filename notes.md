@@ -14,7 +14,7 @@ AccountAggregate
 
 # Tests
 
-1. Create account
+- [ ] Create account
     - set balance to 0
     - get account number in result of command
 
@@ -22,5 +22,5 @@ AccountAggregate
         - uuid will be generated at the command level
         - event is then built and published
 
-2. View account
+- [ ] View account
     - see account details
