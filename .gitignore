@@ -161,3 +161,6 @@ buildNumber.properties
 .mvn/timing.properties
 
 cli/bin/*
+gradle/**
+.gradle/
+build/**

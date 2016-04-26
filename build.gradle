@@ -1,0 +1,63 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.0.M2'
+        kotlin_version = '1.0.1-2'
+    }
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/libs-milestone' }
+        jcenter()
+
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'banksy'
+    version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/snapshot" }
+    maven { url "http://repo.spring.io/milestone" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version:'19.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-devtools', version:'1.4.0.M2'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version:'1.4.0.M2'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version:'1.0.1-2'
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version:'2.7.3'
+    testCompile(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version:'1.4.0.M2') {
+      exclude(module: 'commons-logging')
+    }
+    testCompile group: 'io.damo.kspec', name: 'kspec', version: '1.2.0'
+    testCompile group: 'org.assertj', name: 'assertj-core', version:'3.4.1'
+    testCompile group: 'org.apache.geronimo.bundles', name: 'json', version:'20090211_1'
+    testCompile group: 'com.jayway.restassured', name: 'rest-assured', version:'2.9.0'
+
+    task resolveAllDependencies {
+        doLast {
+            configurations.all {
+                it.resolve()
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.12'
+}
