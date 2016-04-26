@@ -1,0 +1,26 @@
+---
+dependencies:
+  pre:
+    - curl -v -L -o cf-cli_amd64.deb 'https://cli.run.pivotal.io/stable?release=debian64&source=github'
+    - sudo dpkg -i cf-cli_amd64.deb
+    - cf -v
+
+machine:
+  java:
+    version: oraclejdk8
+
+test:
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+    - mvn -Dmaven.test.skip=true package
+    - cf api https://api.run.pivotal.io
+    - cf auth $PWS_USER $PWS_PASSWORD
+    - cf target -o 'Labs Singapore' -s moab
+    - cf a
+
+deployment:
+  development:
+    branch: master
+    commands:
+      - cf push

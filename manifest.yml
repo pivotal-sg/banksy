@@ -1,0 +1,5 @@
+---
+applications:
+  - name: moab
+    path: target/moab-0.0.1-SNAPSHOT.jar
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git
