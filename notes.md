@@ -5,11 +5,21 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 - dispatcher of a Command receives a CommandResult<T>
 - Event Publishing does NOT generate an EventResult<T>
 - Communication directly between Aggregates IS ILLEGAL!
+- Aggregates apply events after publishing them to the Event Log
 
-AccountAggregate
-  - Account <- aggregate root (ie. has a repository)
-     - Credits : List<Credits>
-     - Debits : List<Debits>
+# Major components
+
+- **AccountAggregate**
+     - Account <- aggregate root
+         - ClientName
+         - ClientDoB
+         - ClientID
+         - Balance
+         - Credits (collection)
+         - Debits (collection)
+         - 
+
+- **AccountService**
 
 # Spec
 
