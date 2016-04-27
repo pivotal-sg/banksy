@@ -41,7 +41,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.0.M2'
     compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.1-2'
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.7.3'
-    compile 'io.polymorphicpanda.kspec:kspec-core:0.3.0'
     testCompile('org.springframework.boot:spring-boot-starter-test:1.4.0.M2') {
       exclude(module: 'commons-logging')
     }
@@ -50,6 +49,7 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.4.1'
     testCompile 'org.apache.geronimo.bundles:json:20090211_1'
     testCompile 'com.jayway.restassured:rest-assured:2.9.0'
+    testCompile 'org.mockito:mockito-core:1.+'
 
     task resolveAllDependencies {
         doLast {

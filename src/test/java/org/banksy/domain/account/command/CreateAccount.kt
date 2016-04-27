@@ -4,6 +4,7 @@ import io.polymorphicpanda.kspec.*
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.assertj.core.api.Assertions.*
 import org.banksy.domain.account.command.response.CommandResponse
+import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.domain.account.service.AccountService
 import org.banksy.eventlog.EventLog
@@ -18,7 +19,7 @@ class CreateAccountSpec: KSpec() {
             var accountRepo = AccountRepository()
             var accountService = AccountService(accountRepo, eventLog)
 
-            after {
+            afterEach {
                 // Reset the storages/service.
                 eventLog = EventLog()
                 accountRepo = AccountRepository()
@@ -43,10 +44,20 @@ class CreateAccountSpec: KSpec() {
 
             // Integration it.
             it("create results in a AccountCreated event being persisted") {
+                val command = Create("123")
+                accountService.handle(command)
 
+                val lastEvent = eventLog.latest()
+                if (lastEvent is AccountCreated) {
+                    assertThat(lastEvent.accountNumber).isEqualTo("123")
+                } else {
+                    fail("lastEvent wasn't an `AccountCreated`")
+                }
             }
 
-            it("create results in a AccountCreated event being published on the bus") {
+            xit("create results in a AccountCreated event being published on the bus") {
+                val command = Create("123")
+                accountService.handle(command)
 
             }
         }
