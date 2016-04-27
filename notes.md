@@ -9,17 +9,58 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 
 # Major components
 
-- **AccountAggregate**
-     - Account <- aggregate root
-         - ClientName
-         - ClientDoB
-         - ClientID
-         - Balance
-         - Credits (collection)
-         - Debits (collection)
-         - 
+- **AccountCommandDispatcher**
+    - Resposibilities
+        - dispatch commands to the AccountService
+    - Collaborators
+        - AccountService
 
 - **AccountService**
+    - Resposibilities
+        - Keep Account Aggregates updated
+        - Persist new events and apply them to the aggregate
+    - Collaborators
+        - AccountRepo
+        - EventBus
+        - EventStore
+
+- **AccountRepository**
+    - Resposibilities
+        - get/save account aggregate
+    - Collaborators
+        - AccountAggregate
+
+- **AccountAggregate**
+    - Resposibilities
+        - validates command
+        - apply events
+
+- **AccountQueryService**
+    - Resposibilities
+        - Forward events to relevant projections
+    - Collaborators
+        - EventBus
+
+- **QueryDispatcher**
+    - Resposibilities
+        - route query requests to projections and receive results
+    - Collaborators
+        - Projections
+
+- **EventStore**
+    - Resposibilities
+        - Log events
+    - Collaborators
+        - EventBus
+
+- **EventBus**
+    - Resposibilities
+        - subscribe events
+        - publish events
+
+    - Collaborators
+        - Publishers
+        - Subscribers
 
 # Spec
 
@@ -40,7 +81,7 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [ ] Validate positive credit amount
     - [ ] Show success/fail
     - [ ] AccountCredited Event is built and published
-    
+
 - [ ] Debit Account
     - [ ] Validate positive debit amount
     - [ ] Validate within overdraft limit
