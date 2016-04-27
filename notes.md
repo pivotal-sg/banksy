@@ -91,3 +91,8 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 - [ ] Transfer from Account A to Account B
 - [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
 - [ ] ~~Pay annual interest on credit~~
+
+# Tools
+
+- [Kotlin](https://kotlinlang.org)
+- [KSpec](https://github.com/dam5s/kspec) RSpec style testing for Kotlin
