@@ -21,7 +21,9 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      */
     fun handle(create: Create): CommandResponse<AccountCreationDetails> {
         val accountNumber = create.accountNumber
-
+        if (accountNumber.isBlank()) {
+            return CommandResponse<AccountCreationDetails>(null, false)
+        }
         val newAccount = accountRepo.findOrCreate(accountNumber)
         val createdAccount = AccountCreated(accountNumber)
         eventLog.save(createdAccount)
