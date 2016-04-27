@@ -2,7 +2,7 @@ package org.banksy.domain.account.service
 
 import org.banksy.domain.account.aggregate.AccountAggregate
 import org.banksy.domain.account.command.AccountCreationDetails
-import org.banksy.domain.account.command.Create
+import org.banksy.domain.account.command.AccountCreate
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.repository.AccountRepository
@@ -19,7 +19,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      *
      * @param create Create account command
      */
-    fun handle(create: Create): CommandResponse<AccountCreationDetails> {
+    fun handle(create: AccountCreate): CommandResponse<AccountCreationDetails> {
         val accountNumber = create.accountNumber
         if (accountNumber.isBlank()) {
             return CommandResponse<AccountCreationDetails>(null, false)

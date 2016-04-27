@@ -8,13 +8,13 @@ import org.junit.runner.RunWith
 @RunWith(JUnitKSpecRunner::class)
 class CreateAccountSpec: KSpec() {
     override fun spec() {
-        describe("#accountCreated")
+        describe("the default constructor")
         {
-            it("Constructor defaults are sane") {
+            it("assigns a unique Account number") {
                 val accountCreated1 = AccountCreated("123")
                 val accountCreated2 = AccountCreated("321")
 
-                assertThat(accountCreated1.eventID).isNotEqualTo(accountCreated2.eventID)
+                assertThat(accountCreated1.accountNumber).isNotEqualTo(accountCreated2.accountNumber)
             }
        }
     }
