@@ -17,10 +17,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      * When passed a Create command, persist the event to the event log,  apply it to
      * the newly created AccountAggregate (via AccountRepository)
      *
-     * @param create Create account command
+     * @param accountCreateCommand Create account command
      */
-    fun handle(create: AccountCreate): CommandResponse<AccountCreationDetails> {
-        val accountNumber = create.accountNumber
+    fun handle(accountCreateCommand: AccountCreate): CommandResponse<AccountCreationDetails> {
+        val accountNumber = accountCreateCommand.accountNumber
         if (accountNumber.isBlank()) {
             return CommandResponse<AccountCreationDetails>(null, false)
         }
