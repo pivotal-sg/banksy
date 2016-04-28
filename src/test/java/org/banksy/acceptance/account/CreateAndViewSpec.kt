@@ -6,7 +6,7 @@ import io.polymorphicpanda.kspec.describe
 import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.assertj.core.api.Assertions.assertThat
-import org.banksy.domain.account.command.AccountCreate
+import org.banksy.domain.account.command.CreateAccount
 import org.banksy.domain.account.query.AccountInfo
 import org.banksy.domain.account.query.AccountQueryService
 import org.banksy.domain.account.repository.AccountRepository
@@ -30,7 +30,7 @@ class CreateAndViewSpec : KSpec() {
             }
 
             it("creates a viewable account") {
-                val accountCreateCommand = AccountCreate("123")
+                val accountCreateCommand = CreateAccount("123")
                 val accountQueryService = AccountQueryService(bus)
 
                 accountService.handle(accountCreateCommand)

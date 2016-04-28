@@ -2,9 +2,12 @@ package org.banksy.domain.account.service
 
 import org.banksy.domain.account.aggregate.AccountAggregate
 import org.banksy.domain.account.command.AccountCreationDetails
-import org.banksy.domain.account.command.AccountCreate
+import org.banksy.domain.account.command.AccountCreditedDetails
+import org.banksy.domain.account.command.CreateAccount
+import org.banksy.domain.account.command.CreditAccount
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
+import org.banksy.domain.account.event.AccountCredited
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.eventlog.EventLog
 
@@ -19,16 +22,30 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      *
      * @param accountCreateCommand Create account command
      */
-    fun handle(accountCreateCommand: AccountCreate): CommandResponse<AccountCreationDetails> {
+    fun handle(accountCreateCommand: CreateAccount): CommandResponse<AccountCreationDetails> {
         val accountNumber = accountCreateCommand.accountNumber
         if (accountNumber.isBlank()) {
             return CommandResponse<AccountCreationDetails>(null, false)
         }
-        val newAccount = accountRepo.findOrCreate(accountNumber)
+        val newAccount = accountRepo.add(accountNumber)
         val createdAccount = AccountCreated(accountNumber)
         eventLog.save(createdAccount)
         newAccount.apply(createdAccount)
 
         return CommandResponse<AccountCreationDetails>(AccountCreationDetails(accountNumber) ,true)
+    }
+
+    fun handle(creditAccountCommand: CreditAccount): CommandResponse<AccountCreditedDetails> {
+        val accountNumber = creditAccountCommand.accountNumber
+        val amount = creditAccountCommand.amount
+        if (amount <= 0) {
+            return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), false)
+        }
+        val accountAggregate = accountRepo.find(accountNumber)
+        val accountCredited = AccountCredited(accountNumber, amount)
+        eventLog.save(accountCredited)
+
+        accountAggregate!!.apply(accountCredited)
+        return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), true)
     }
 }

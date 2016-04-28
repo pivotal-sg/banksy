@@ -27,7 +27,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("Successfully create an Account") {
-                val command = AccountCreate("123")
+                val command = CreateAccount("123")
                 val response = accountService.handle(command)
 
                 assertThat(response).isInstanceOf(CommandResponse::class.java)
@@ -35,7 +35,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("Fail to create an account with a blank accountNumber") {
-                val command = AccountCreate("")
+                val command = CreateAccount("")
                 val response = accountService.handle(command)
 
                 assertThat(response).isInstanceOf(CommandResponse::class.java)
@@ -43,7 +43,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("create results in a AccountCreated event being persisted") {
-                val command = AccountCreate("123")
+                val command = CreateAccount("123")
                 accountService.handle(command)
 
                 val lastEvent = eventLog.latest()

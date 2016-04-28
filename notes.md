@@ -64,7 +64,7 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 
 # Spec
 
-- [ ] Create account
+- [x] Create account
     - [x] Set balance to 0
     - [x] Get account number in result of command
     - [x] Indicate success
@@ -79,9 +79,10 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 
 
 - [ ] Credit Account
-    - [ ] Validate positive credit amount
-    - [ ] Show success/fail
-    - [ ] AccountCredited Event is built and published
+    - [x] Validate positive credit amount
+    - [x] Show success/fail
+    - [x] AccountCredited Event is built and published
+    - [ ] Querying shows the account balance has changed
 
 - [ ] Debit Account
     - [ ] Validate positive debit amount
