@@ -37,6 +37,7 @@ class CreditAccountSpec : KSpec(){
                 eventLog = EventLog(bus)
                 accountService = AccountService(accountRepo, eventLog)
             }
+
             it("results in a AccountCredited event being persisted") {
 
                 val command = CreditAccount(accountNumber, 100)

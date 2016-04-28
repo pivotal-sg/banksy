@@ -7,6 +7,7 @@ import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.assertj.core.api.Assertions.assertThat
 import org.banksy.domain.account.command.CreateAccount
+import org.banksy.domain.account.command.CreditAccount
 import org.banksy.domain.account.query.AccountInfo
 import org.banksy.domain.account.query.AccountQueryService
 import org.banksy.domain.account.repository.AccountRepository
@@ -15,31 +16,29 @@ import org.banksy.eventlog.EventLog
 import org.junit.runner.RunWith
 
 @RunWith(JUnitKSpecRunner::class)
-class CreateAndViewSpec : KSpec() {
+class CreditAndViewSpec : KSpec() {
     override fun spec() {
 
-        describe("creating an account and then viewing it") {
-            val bus = EventBus()
-            val accountRepo = AccountRepository()
+        describe("Credit an account and then viewing it") {
+            val accountNumber = "123"
+            val createAccountCommand = CreateAccount(accountNumber)
 
+            val bus = EventBus()
             var eventLog = EventLog(bus)
+            var accountRepo = AccountRepository()
             var accountService = AccountService(accountRepo, eventLog)
 
-            afterEach {
-                eventLog = EventLog(bus)
-                accountService = AccountService(accountRepo, eventLog)
-            }
-
-            it("creates a viewable account") {
-                val accountCreateCommand = CreateAccount("123")
+            it("Accumulates multiple credits") {
                 val accountQueryService = AccountQueryService(bus)
 
-                accountService.handle(accountCreateCommand)
+                accountService.handle(createAccountCommand)
 
-                val accountInfo: AccountInfo? = accountQueryService.accountInfo("123")
-                assertThat(accountInfo?.balance).isEqualTo(0)
+                val credits = longArrayOf(100, 12, 34, 100)
+                credits.forEach { accountService.handle(CreditAccount(accountNumber, it)) }
+
+                val accountInfo: AccountInfo? = accountQueryService.accountInfo(accountNumber)
+                assertThat(accountInfo?.balance).isEqualTo(246)
             }
         }
     }
 }
-

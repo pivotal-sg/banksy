@@ -78,11 +78,11 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Show top level account details
 
 
-- [ ] Credit Account
+- [x] Credit Account
     - [x] Validate positive credit amount
     - [x] Show success/fail
     - [x] AccountCredited Event is built and published
-    - [ ] Querying shows the account balance has changed
+    - [x] Querying shows the account balance has changed
 
 - [ ] Debit Account
     - [ ] Validate positive debit amount
