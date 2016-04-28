@@ -45,7 +45,7 @@ class EventLogSpec: KSpec() {
             }
         }
     }
+
+    private class AnEvent {}
+
 }
-
-
-private class AnEvent {}

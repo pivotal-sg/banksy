@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.*
 import org.junit.runner.RunWith
 
 @RunWith(JUnitKSpecRunner::class)
-class CreateAccountSpec: KSpec() {
+class AccountCreatedSpec: KSpec() {
     override fun spec() {
         describe("the default constructor")
         {
