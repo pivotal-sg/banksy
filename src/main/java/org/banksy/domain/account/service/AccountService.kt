@@ -63,7 +63,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         val accountNumber = debitAccountCommand.accountNumber
         val amount = debitAccountCommand.amount
         if (amount <= 0) {
-            return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), true)
+            return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), false)
         }
         val accountAggregate = accountRepo.find(accountNumber)
         val accountDebited = AccountDebited(accountNumber, amount)

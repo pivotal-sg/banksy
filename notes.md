@@ -90,8 +90,8 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] AccountDebited Event is built and published
 
 - [ ] Overdraft facility
+    - [ ] Validate debits are within overdraft limit
     - [ ] Fix aggregate application
-    - [ ] ~~Validate debits are within overdraft limit~~
     - [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
 
 ### Deferred implementation...

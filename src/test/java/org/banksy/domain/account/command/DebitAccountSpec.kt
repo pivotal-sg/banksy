@@ -69,6 +69,16 @@ class DebitAccountSpec : KSpec(){
                 assertThat(success).isFalse()
             }
 
+            it("respects the overdraft limits") {
+                val amount = 1L
+                val command = DebitAccount(accountNumber, amount)
+
+                var (content, success) = accountService.handle(command)
+
+                assertThat(success).isFalse()
+                assertThat(content!!.errors).contains("Overdraft Limit Exceeded")
+            }
+
         }
     }
 }
