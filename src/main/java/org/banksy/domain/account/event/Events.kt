@@ -9,3 +9,5 @@ import java.util.*
 data class AccountCreated(val accountNumber: String)
 
 data class AccountCredited(val accountNumber: String, val amount: Long)
+
+data class AccountDebited(val accountNumber: String, val amount: Long)

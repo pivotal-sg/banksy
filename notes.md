@@ -84,14 +84,19 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] AccountCredited Event is built and published
     - [x] Querying shows the account balance has changed
 
-- [ ] Debit Account
-    - [ ] Validate positive debit amount
-    - [ ] Validate within overdraft limit
-    - [ ] Show success/fail
-    - [ ] AccountDebited Event is built and published
+- [x] Debit Account
+    - [x] Validate positive debit amount
+    - [x] Show success/fail
+    - [x] AccountDebited Event is built and published
 
-- [ ] Transfer from Account A to Account B
-- [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
+- [ ] Fix aggregate application
+- [ ] Add JSON RPC controller
+
+- [ ] Overdraft facility
+    - [ ] ~~Validate debits are within overdraft limit~~
+    - [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
+
+- [ ] ~~Transfer from Account A to Account B~~
 - [ ] ~~Pay annual interest on credit~~
 
 # Tools

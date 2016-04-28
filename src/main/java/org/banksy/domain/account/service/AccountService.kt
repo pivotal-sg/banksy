@@ -1,13 +1,11 @@
 package org.banksy.domain.account.service
 
 import org.banksy.domain.account.aggregate.AccountAggregate
-import org.banksy.domain.account.command.AccountCreationDetails
-import org.banksy.domain.account.command.AccountCreditedDetails
-import org.banksy.domain.account.command.CreateAccount
-import org.banksy.domain.account.command.CreditAccount
+import org.banksy.domain.account.command.*
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.event.AccountCredited
+import org.banksy.domain.account.event.AccountDebited
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.eventlog.EventLog
 
@@ -48,4 +46,20 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         accountAggregate!!.apply(accountCredited)
         return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), true)
     }
+
+    fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
+        val accountNumber = debitAccountCommand.accountNumber
+        val amount = debitAccountCommand.amount
+        if (amount <= 0) {
+            return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), true)
+        }
+        val accountAggregate = accountRepo.find(accountNumber)
+        val accountDebited = AccountDebited(accountNumber, amount)
+        eventLog.save(accountDebited)
+
+        accountAggregate!!.apply(accountDebited)
+        return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), true)
+    }
+
+
 }
