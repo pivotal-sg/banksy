@@ -4,4 +4,4 @@ package org.banksy.domain.account.command.response
  * if a Command Succeeded, and embeds the value object/DTO of the response
  *
  */
-data class CommandResponse<T>(var body: T? = null, val success:Boolean = false) { }
+data class CommandResponse<T>(var body: T? = null, val success:Boolean = false, val errors: List<String> = listOf())

@@ -40,6 +40,8 @@ class DebitAccountSpec : KSpec(){
             }
 
             it("results in a AccountDebited event being persisted") {
+                val credit = CreditAccount(accountNumber, 100)
+                accountService.handle(credit)
 
                 val command = DebitAccount(accountNumber, 100)
                 val response = accountService.handle(command)
@@ -50,7 +52,6 @@ class DebitAccountSpec : KSpec(){
                     assertThat(lastEvent.accountNumber).isEqualTo("123")
                     assertThat(lastEvent.amount).isEqualTo(100)
                 } else {
-                    System.out.print("BOO: " + lastEvent.javaClass)
                     fail("lastEvent wasn't an `AccountDebited`")
                 }
             }
@@ -73,10 +74,10 @@ class DebitAccountSpec : KSpec(){
                 val amount = 1L
                 val command = DebitAccount(accountNumber, amount)
 
-                var (content, success) = accountService.handle(command)
+                var (content, success, errors) = accountService.handle(command)
 
                 assertThat(success).isFalse()
-                assertThat(content!!.errors).contains("Overdraft Limit Exceeded")
+                assertThat(errors).contains("Overdraft Limit Exceeded")
             }
 
         }

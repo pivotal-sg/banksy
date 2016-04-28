@@ -45,10 +45,11 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         if (amount <= 0) {
             return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), false)
         }
-        val accountAggregate = accountRepo.find(accountNumber)
+
+        val accountAggregate = accountRepo.find(accountNumber)!!
         val accountCredited = AccountCredited(accountNumber, amount)
         eventLog.save(accountCredited)
-        accountAggregate!!.apply(accountCredited)
+        accountAggregate.apply(accountCredited)
 
         return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), true)
     }
@@ -62,14 +63,27 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
     fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
         val accountNumber = debitAccountCommand.accountNumber
         val amount = debitAccountCommand.amount
-        if (amount <= 0) {
-            return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), false)
-        }
-        val accountAggregate = accountRepo.find(accountNumber)
-        val accountDebited = AccountDebited(accountNumber, amount)
-        eventLog.save(accountDebited)
-        accountAggregate!!.apply(accountDebited)
+        val accountDebitedDetails = AccountDebitedDetails(accountNumber, amount)
+        val accountAggregate = accountRepo.find(accountNumber)!!
+        val currentBalance = accountAggregate.balance
+        val overdraftLimit = accountAggregate.overdraftLimit
 
-        return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), true)
+        if (amount <= 0) {
+            return CommandResponse<AccountDebitedDetails>(accountDebitedDetails, false)
+        }
+
+        if (currentBalance - amount < overdraftLimit) {
+            return CommandResponse<AccountDebitedDetails>(
+                    accountDebitedDetails,
+                    false,
+                    listOf("Overdraft Limit Exceeded"))
+        }
+
+        val accountDebited = AccountDebited(accountNumber, amount)
+
+        eventLog.save(accountDebited)
+        accountAggregate.apply(accountDebited)
+
+        return CommandResponse<AccountDebitedDetails>(accountDebitedDetails, true)
     }
 }

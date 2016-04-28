@@ -10,10 +10,13 @@ class AccountAggregate {
     }
 
     fun apply(accountCredited: AccountCredited) {
-        // TODO...
+        balance += accountCredited.amount
     }
 
     fun apply(accountDebited: AccountDebited) {
-        // TODO...
+        balance -= accountDebited.amount
     }
+
+    var balance: Long = 0
+    var overdraftLimit: Long = 0
 }
