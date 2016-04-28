@@ -5,7 +5,7 @@ import io.polymorphicpanda.kspec.*
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.junit.runner.RunWith
 import org.assertj.core.api.Assertions.*
-import org.banksy.domain.account.command.createAccountFactory
+import org.banksy.domain.account.command.createAccountCommandFactory
 import java.util.*
 
 @RunWith(JUnitKSpecRunner::class)
@@ -20,7 +20,7 @@ class CreateCommandFactorySpec : KSpec(){
                  *                <- [returns result]
                  * <- [Returns response to requestor]
                  */
-                val createCommand = createAccountFactory()
+                val createCommand = createAccountCommandFactory()
 
                 try {
                     UUID.fromString(createCommand.accountNumber)

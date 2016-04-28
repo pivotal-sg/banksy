@@ -2,6 +2,6 @@ package org.banksy.domain.account.command
 
 import java.util.*
 
-fun createAccountFactory(): AccountCreate {
+fun createAccountCommandFactory(): AccountCreate {
     return AccountCreate(UUID.randomUUID().toString())
 }
