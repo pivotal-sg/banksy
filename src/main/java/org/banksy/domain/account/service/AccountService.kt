@@ -18,10 +18,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      * When passed a Create command, persist the event to the event log,  apply it to
      * the newly created AccountAggregate (via AccountRepository)
      *
-     * @param accountCreateCommand Create account command
+     * @param createAccountCommand Create account command
      */
-    fun handle(accountCreateCommand: CreateAccount): CommandResponse<AccountCreationDetails> {
-        val accountNumber = accountCreateCommand.accountNumber
+    fun handle(createAccountCommand: CreateAccount): CommandResponse<AccountCreationDetails> {
+        val accountNumber = createAccountCommand.accountNumber
         if (accountNumber.isBlank()) {
             return CommandResponse<AccountCreationDetails>(null, false)
         }
@@ -33,6 +33,12 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return CommandResponse<AccountCreationDetails>(AccountCreationDetails(accountNumber) ,true)
     }
 
+    /**
+     * When passed a Credit command, persist the event to the event log,  apply it to
+     * the correct AccountAggregate (via AccountRepository.find)
+     *
+     * @param creditAccountCommand Credit account command
+     */
     fun handle(creditAccountCommand: CreditAccount): CommandResponse<AccountCreditedDetails> {
         val accountNumber = creditAccountCommand.accountNumber
         val amount = creditAccountCommand.amount
@@ -47,6 +53,12 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), true)
     }
 
+    /**
+     * When passed a Debit command, persist the event to the event log,  apply it to
+     * the correct AccountAggregate (via AccountRepository)
+     *
+     * @param debitAccountCommand Debit account command
+     */
     fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
         val accountNumber = debitAccountCommand.accountNumber
         val amount = debitAccountCommand.amount
@@ -60,6 +72,4 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
 
         return CommandResponse<AccountDebitedDetails>(AccountDebitedDetails(accountNumber, amount), true)
     }
-
-
 }

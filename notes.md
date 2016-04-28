@@ -89,13 +89,14 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Show success/fail
     - [x] AccountDebited Event is built and published
 
-- [ ] Fix aggregate application
-- [ ] Add JSON RPC controller
-
 - [ ] Overdraft facility
+    - [ ] Fix aggregate application
     - [ ] ~~Validate debits are within overdraft limit~~
     - [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
 
+### Deferred implementation...
+
+- [ ] Add JSON RPC controller
 - [ ] ~~Transfer from Account A to Account B~~
 - [ ] ~~Pay annual interest on credit~~
 
