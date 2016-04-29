@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 class CreditAccountSpec : KSpec(){
     override fun spec()
     {
-        describe("crediting an account") {
+        describe("Crediting an account") {
 
             val accountNumber = "123"
             val createAccountCommand = CreateAccount(accountNumber)

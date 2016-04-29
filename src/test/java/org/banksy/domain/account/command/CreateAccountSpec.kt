@@ -14,13 +14,12 @@ import org.junit.runner.RunWith
 class CreateAccountSpec: KSpec() {
     override fun spec()
     {
-        describe("#create") {
+        describe("Creating an account") {
             var eventLog = EventLog()
             var accountRepo = AccountRepository()
             var accountService = AccountService(accountRepo, eventLog)
 
             afterEach {
-                // Reset the storages/service.
                 eventLog = EventLog()
                 accountRepo = AccountRepository()
                 accountService = AccountService(accountRepo, eventLog)
@@ -46,11 +45,12 @@ class CreateAccountSpec: KSpec() {
                 val command = CreateAccount("123")
                 accountService.handle(command)
 
-                val lastEvent = eventLog.latest()
-                if (lastEvent is AccountCreated) {
-                    assertThat(lastEvent.accountNumber).isEqualTo("123")
+                val event = eventLog.latest()
+
+                if (event is AccountCreated) {
+                    assertThat(event.accountNumber).isEqualTo("123")
                 } else {
-                    fail("lastEvent wasn't an `AccountCreated`")
+                    fail("last event wasn't an `AccountCreated`")
                 }
             }
         }
