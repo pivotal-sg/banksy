@@ -12,15 +12,16 @@ import org.assertj.core.api.Assertions.*
 @RunWith(JUnitKSpecRunner::class)
 class EventLogSpec: KSpec() {
     override fun spec() {
-        var eventLog = EventLog()
-        val mockedEventBus = mock(EventBus::class.java)
-        describe("save") {
-            // reset eventlog
-            beforeEach {
-                reset(mockedEventBus)
-                eventLog = EventLog(mockedEventBus)
-            }
 
+        val mockedEventBus = mock(EventBus::class.java)
+        var eventLog = EventLog(mockedEventBus)
+
+        beforeEach {
+            reset(mockedEventBus)
+            eventLog = EventLog(mockedEventBus)
+        }
+
+        describe("save") {
             it("Publishes events that are saved") {
                 var eventUnderTest = AnEvent()
                 eventLog.save(eventUnderTest)
@@ -29,18 +30,11 @@ class EventLogSpec: KSpec() {
         }
 
         describe("getting events") {
-            // reset eventlog
-            beforeEach {
-                reset(mockedEventBus)
-                eventLog = EventLog(mockedEventBus)
-            }
-
             it("can get the last event") {
                 var firstEvent = AnEvent()
                 var lastEvent = AnEvent()
                 eventLog.save(firstEvent)
                 eventLog.save(lastEvent)
-
                 assertThat(eventLog.latest()).isEqualTo(lastEvent)
             }
         }
