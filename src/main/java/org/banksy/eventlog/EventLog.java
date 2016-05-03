@@ -10,12 +10,12 @@ public class EventLog {
 
     public EventLog(EventBus bus) {
         this.bus = bus;
-        theStorageBin = new Vector<Object>();
+        theStorageBin = new Vector();
     }
 
     public EventLog() {
         this.bus = new EventBus();
-        theStorageBin = new Vector<Object>();
+        theStorageBin = new Vector();
     }
 
     public void save(Object event) {
@@ -25,5 +25,9 @@ public class EventLog {
 
     public Object latest() {
         return theStorageBin.lastElement();
+    }
+
+    public int size() {
+        return theStorageBin.size();
     }
 }

@@ -1,7 +1,7 @@
 EventSourcing (our take on ES!) ... some notes on architecture ...
 
 - An aggregate is a representations of an entity, or group of tightly interrelated entities.
-- Aggregates may publish events (not dispatch commands)
+- ~~Aggregates may publish events (not dispatch commands)~~ UNTRUE - Aggregates do NOT publish events
 - dispatcher of a Command receives a CommandResult<T>
 - Event Publishing does NOT generate an EventResult<T>
 - Communication directly between Aggregates IS ILLEGAL!
@@ -17,6 +17,7 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 
 - **AccountService**
     - Resposibilities
+        - ensure command values are wellformed
         - Keep Account Aggregates updated
         - Persist new events and apply them to the aggregate
     - Collaborators
@@ -27,25 +28,28 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 - **AccountRepository**
     - Resposibilities
         - get/save account aggregate
+
     - Collaborators
         - AccountAggregate
 
 - **AccountAggregate**
     - Resposibilities
-        - validates command
+        - validates the business logic content of a command
         - apply events
 
 - **AccountQueryService**
     - Resposibilities
-        - Forward events to relevant projections
+        - (write side of Query system)
+        - Build (or rebuild) persisted queryable data set(s) derived from Event input
     - Collaborators
         - EventBus
 
 - **QueryDispatcher**
     - Resposibilities
-        - route query requests to projections and receive results
+        - (read side of Query system)
+        -
     - Collaborators
-        - Projections
+        - (future role) Projections (a variety of queryable datasets)
 
 - **EventStore**
     - Resposibilities
@@ -59,8 +63,8 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
         - publish events
 
     - Collaborators
-        - Publishers
-        - Subscribers
+        - Publishers (generic event publish behavior/role)
+        - Subscribers (generic event subscription behavior/role)
 
 # Spec
 
@@ -77,7 +81,6 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 - [x] View account / balance
     - [x] Show top level account details
 
-
 - [x] Credit Account
     - [x] Validate positive credit amount
     - [x] Show success/fail
@@ -89,16 +92,19 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Show success/fail
     - [x] AccountDebited Event is built and published
 
-- [ ] Overdraft facility
-    - [ ] Validate debits are within overdraft limit
-    - [ ] Fix aggregate application
-    - [ ] ~~Charge monthly interest on Overdraft (at EOM)~~
+- [x] Overdraft facility
+    - [x] Validate debits are within overdraft limit
+    - [x] Fix application and validation via aggregate
+
+- [ ] Batch jobs
+    - [ ] Charge monthly interest on Overdraft (at EOM)
+    - [ ] Pay annual interest on funds in credit (at EOY)
 
 ### Deferred implementation...
 
+- [ ] Pass relevant events to an Aggregate for handling, and persists the updated aggregate in the repo.
+- [ ] Transfer from Account A to Account B
 - [ ] Add JSON RPC controller
-- [ ] ~~Transfer from Account A to Account B~~
-- [ ] ~~Pay annual interest on credit~~
 
 # Tools
 

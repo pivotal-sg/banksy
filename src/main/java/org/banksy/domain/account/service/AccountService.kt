@@ -1,11 +1,9 @@
 package org.banksy.domain.account.service
 
-import org.banksy.domain.account.aggregate.AccountAggregate
 import org.banksy.domain.account.command.*
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.event.AccountCredited
-import org.banksy.domain.account.event.AccountDebited
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.eventlog.EventLog
 
@@ -62,28 +60,18 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      */
     fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
         val accountNumber = debitAccountCommand.accountNumber
-        val amount = debitAccountCommand.amount
-        val accountDebitedDetails = AccountDebitedDetails(accountNumber, amount)
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val currentBalance = accountAggregate.balance
-        val overdraftLimit = accountAggregate.overdraftLimit
+        val (response, events) = accountAggregate.validate(debitAccountCommand)
 
-        if (amount <= 0) {
-            return CommandResponse<AccountDebitedDetails>(accountDebitedDetails, false)
+        if (response.success) {
+            events.forEach { event ->
+                eventLog.save(event)
+                accountAggregate.apply(event)
+            }
+
+            accountRepo.save(accountNumber, accountAggregate)
         }
 
-        if (currentBalance - amount < overdraftLimit) {
-            return CommandResponse<AccountDebitedDetails>(
-                    accountDebitedDetails,
-                    false,
-                    listOf("Overdraft Limit Exceeded"))
-        }
-
-        val accountDebited = AccountDebited(accountNumber, amount)
-
-        eventLog.save(accountDebited)
-        accountAggregate.apply(accountDebited)
-
-        return CommandResponse<AccountDebitedDetails>(accountDebitedDetails, true)
+        return response
     }
 }

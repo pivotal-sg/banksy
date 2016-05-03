@@ -13,6 +13,10 @@ class AccountRepository {
     }
 
     fun find(accountNumber: String): AccountAggregate? {
-        return repo.get(accountNumber)
+        return repo[accountNumber]
+    }
+
+    fun save(accountNumber: String, accountAggregate: AccountAggregate) {
+        repo.put(accountNumber, accountAggregate)
     }
 }

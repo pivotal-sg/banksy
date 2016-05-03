@@ -1,13 +1,11 @@
 package org.banksy.domain.account.event
 
-import org.banksy.domain.account.command.CreateAccount
-import java.time.LocalDate
-import java.util.*
+// Use the naming convention of noun with past tense verb for Events
 
-// Use the naming convetion of noun with past tense verb for Events
+interface AccountEvent
 
-data class AccountCreated(val accountNumber: String)
+data class AccountCreated(val accountNumber: String) : AccountEvent
 
-data class AccountCredited(val accountNumber: String, val amount: Long)
+data class AccountCredited(val accountNumber: String, val amount: Long) : AccountEvent
 
-data class AccountDebited(val accountNumber: String, val amount: Long)
+data class AccountDebited(val accountNumber: String, val amount: Long) : AccountEvent

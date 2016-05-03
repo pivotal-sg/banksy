@@ -7,6 +7,7 @@ import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.assertj.core.api.Assertions.assertThat
 import org.banksy.domain.account.command.CreateAccount
+import org.banksy.domain.account.command.CreditAccount
 import org.banksy.domain.account.command.DebitAccount
 import org.banksy.domain.account.query.AccountInfo
 import org.banksy.domain.account.query.AccountQueryService
@@ -19,7 +20,7 @@ import org.junit.runner.RunWith
 class DebitAndViewSpec : KSpec() {
     override fun spec() {
 
-        describe("Debit an account and then viewing it") {
+        describe("View correct balance from the account info query service") {
             val accountNumber = "123"
             val createAccountCommand = CreateAccount(accountNumber)
 
@@ -28,16 +29,17 @@ class DebitAndViewSpec : KSpec() {
             var accountRepo = AccountRepository()
             var accountService = AccountService(accountRepo, eventLog)
 
-            it("Accumulates multiple debits") {
+            it("handles credits and debits") {
                 val accountQueryService = AccountQueryService(bus)
 
                 accountService.handle(createAccountCommand)
+                accountService.handle(CreditAccount(accountNumber, 300))
 
-                val debits = listOf(100L, 12L, 34L, 100L)
+                val debits = longArrayOf(100, 100, 100)
                 debits.forEach { accountService.handle(DebitAccount(accountNumber, it)) }
 
                 val accountInfo: AccountInfo? = accountQueryService.accountInfo(accountNumber)
-                assertThat(accountInfo?.balance).isEqualTo(-246)
+                assertThat(accountInfo?.balance).isEqualTo(0)
             }
         }
     }
