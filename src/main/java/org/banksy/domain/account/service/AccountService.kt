@@ -23,7 +23,9 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
     fun handle(createAccountCommand: CreateAccount): CommandResponse<AccountCreationDetails> {
         val accountNumber = createAccountCommand.accountNumber
         if (accountNumber.isBlank()) {
-            return CommandResponse<AccountCreationDetails>(null, false)
+            return CommandResponse<AccountCreationDetails>(null,
+                    false,
+                    listOf("Account number cannot be blank"))
         }
         val newAccount = accountRepo.add(accountNumber)
         val createdAccount = AccountCreated(accountNumber)
@@ -43,7 +45,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         val accountNumber = creditAccountCommand.accountNumber
         val amount = creditAccountCommand.amount
         if (amount <= 0) {
-            return CommandResponse<AccountCreditedDetails>(AccountCreditedDetails(accountNumber, amount), false)
+           return CommandResponse<AccountCreditedDetails>(
+                  AccountCreditedDetails(accountNumber, amount),
+                  false,
+                  listOf("Can only credit a positive value"))
         }
 
         val accountAggregate = accountRepo.find(accountNumber)!!
@@ -89,5 +94,3 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         }
     }
 }
-
-
