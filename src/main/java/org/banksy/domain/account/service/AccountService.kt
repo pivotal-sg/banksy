@@ -1,9 +1,11 @@
 package org.banksy.domain.account.service
 
+import org.banksy.domain.account.aggregate.AccountAggregate
 import org.banksy.domain.account.command.*
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.event.AccountCredited
+import org.banksy.domain.account.event.AccountEvent
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.eventlog.EventLog
 
@@ -63,15 +65,29 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         val accountAggregate = accountRepo.find(accountNumber)!!
         val (response, events) = accountAggregate.validate(debitAccountCommand)
 
-        if (response.success) {
-            events.forEach { event ->
-                eventLog.save(event)
-                accountAggregate.apply(event)
-            }
-
-            accountRepo.save(accountNumber, accountAggregate)
-        }
+        process(accountAggregate, events)
+        accountRepo.save(accountNumber, accountAggregate)
 
         return response
     }
+
+    fun handle(setAccountOverdraftLimitCommand: SetAccountOverdraftLimit): CommandResponse<AccountOverdraftLimitSetDetails> {
+        val accountNumber = setAccountOverdraftLimitCommand.accountNumber
+        val accountAggregate = accountRepo.find(accountNumber)!!
+        val (response, events) = accountAggregate.validate(setAccountOverdraftLimitCommand)
+
+        process(accountAggregate, events)
+        accountRepo.save(accountNumber, accountAggregate)
+
+        return response
+    }
+
+    private fun process(accountAggregate: AccountAggregate, events: List<AccountEvent>) {
+        events.forEach { event ->
+            eventLog.save(event)
+            accountAggregate.apply(event)
+        }
+    }
 }
+
+

@@ -1,12 +1,11 @@
 package org.banksy.domain.account.aggregate
 
 import org.banksy.domain.account.command.AccountDebitedDetails
+import org.banksy.domain.account.command.AccountOverdraftLimitSetDetails
 import org.banksy.domain.account.command.DebitAccount
+import org.banksy.domain.account.command.SetAccountOverdraftLimit
 import org.banksy.domain.account.command.response.CommandResponse
-import org.banksy.domain.account.event.AccountCreated
-import org.banksy.domain.account.event.AccountCredited
-import org.banksy.domain.account.event.AccountDebited
-import org.banksy.domain.account.event.AccountEvent
+import org.banksy.domain.account.event.*
 import java.util.*
 
 class AccountAggregate {
@@ -19,19 +18,24 @@ class AccountAggregate {
             is AccountCreated -> apply(accountEvent)
             is AccountCredited -> apply(accountEvent)
             is AccountDebited -> apply(accountEvent)
+            is AccountOverdraftLimitSet -> apply(accountEvent)
         }
     }
 
-    fun apply(accountCreated: AccountCreated) {
+    private fun apply(accountCreated: AccountCreated) {
         // TODO...
     }
 
-    fun apply(accountCredited: AccountCredited) {
+    private fun apply(accountCredited: AccountCredited) {
         balance += accountCredited.amount
     }
 
-    fun apply(accountDebited: AccountDebited) {
+    private fun apply(accountDebited: AccountDebited) {
         balance -= accountDebited.amount
+    }
+
+    private fun apply(accountOverdraftLimitSet: AccountOverdraftLimitSet) {
+        overdraftLimit = accountOverdraftLimitSet.overdraftLimit
     }
 
     fun validate(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
@@ -58,6 +62,15 @@ class AccountAggregate {
 
         events.add(AccountDebited(accountNumber, amount))
         return Pair(CommandResponse(accountDebitedDetails, true), events)
+    }
+
+    fun validate(command: SetAccountOverdraftLimit): Pair<CommandResponse<AccountOverdraftLimitSetDetails>, List<AccountEvent>> {
+        val (accountNumber, overdraftLimit) = command
+        val accountOverdraftLimitSetDetails = AccountOverdraftLimitSetDetails(accountNumber, overdraftLimit)
+
+        val events = ArrayList<AccountEvent>()
+        events.add(AccountOverdraftLimitSet(accountNumber, overdraftLimit))
+        return Pair(CommandResponse(accountOverdraftLimitSetDetails, true), events)
     }
 }
 
