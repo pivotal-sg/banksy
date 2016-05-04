@@ -164,3 +164,7 @@ cli/bin/*
 gradle/**
 .gradle/
 build/**
+
+### IntelliJ
+
+.idea
