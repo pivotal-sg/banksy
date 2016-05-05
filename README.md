@@ -17,3 +17,4 @@ As such this example should be considered one opinion among many.
 
 - Google Guava - EventBus
 - Spring / Spring Boot
+
