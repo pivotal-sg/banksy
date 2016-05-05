@@ -96,6 +96,10 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Validate debits are within overdraft limit
     - [x] Fix application and validation via aggregate
 
+- [ ] AccountEvent superclass
+    - [x] has a uuid
+    - [x] has a created at datetime
+
 - [ ] DRY business logic
     - [x] Debit logic is done in one place only
     - [x] Credit logic is done in one place only
