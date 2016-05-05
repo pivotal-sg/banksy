@@ -117,7 +117,6 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 
 ### Deferred implementation...
 
-- [ ] Pass relevant events to an Aggregate for handling, and persists the updated aggregate in the repo.
 - [ ] Transfer from Account A to Account B
 - [ ] Add JSON RPC controller
 
