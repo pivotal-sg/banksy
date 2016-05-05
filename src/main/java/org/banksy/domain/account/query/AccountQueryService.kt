@@ -48,4 +48,10 @@ class AccountQueryService {
                 .filterValues { accountInfo -> accountInfo.balance < 0 }
                 .values
     }
+
+    fun inCreditAccounts(): Collection<AccountInfo> {
+        return accountRepo
+                .filterValues { accountInfo -> accountInfo.balance > 0 }
+                .values
+    }
 }
