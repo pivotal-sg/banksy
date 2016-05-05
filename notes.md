@@ -96,16 +96,18 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Validate debits are within overdraft limit
     - [x] Fix application and validation via aggregate
 
+- [ ] DRY business logic
+    - [x] Debit logic is done in one place only
+    - [x] Credit logic is done in one place only
+
 - [ ] Batch jobs
     - [ ] Charge monthly interest on Overdraft (at EOM)
         - [x] set account overdraft limit - command/event?
-        - [ ] get all accounts which are overdrawn (ie. negative balance)
-        - [ ] implement using the command / repo / aggregate style
+        - [x] get all accounts which are overdrawn (ie. negative balance)
         - [ ] trigger command using Spring batch
         - [ ] only charge once per month / per account
     - [ ] Pay annual interest on funds in credit (at EOM)
         - [ ] get all accounts which are in credit
-        - [ ] implement using the command / repo / aggregate style
         - [ ] trigger command using Spring batch
         - [ ] only credit once per month / per account
 

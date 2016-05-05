@@ -31,6 +31,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         val event = AccountCreated(accountNumber, createAccountCommand.overdraftLimit)
         eventLog.save(event)
         accountAggregate.apply(event)
+        accountRepo.save(accountNumber, accountAggregate)
 
         return CommandResponse<AccountCreationDetails>(AccountCreationDetails(accountNumber) ,true)
     }
@@ -52,7 +53,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         }
 
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val accountCredited = AccountCredited(accountNumber, amount)
+        val accountCredited = AccountCredited(accountNumber, amount, accountAggregate.balance, accountAggregate.balance + amount)
         eventLog.save(accountCredited)
         accountAggregate.apply(accountCredited)
 
@@ -68,7 +69,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
     fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
         val accountNumber = debitAccountCommand.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validate(debitAccountCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(debitAccountCommand)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)
@@ -79,7 +80,7 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
     fun handle(setAccountOverdraftLimitCommand: SetAccountOverdraftLimit): CommandResponse<AccountOverdraftLimitSetDetails> {
         val accountNumber = setAccountOverdraftLimitCommand.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validate(setAccountOverdraftLimitCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(setAccountOverdraftLimitCommand)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)

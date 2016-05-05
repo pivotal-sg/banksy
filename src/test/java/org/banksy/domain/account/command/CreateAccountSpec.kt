@@ -45,13 +45,14 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("create results in a AccountCreated event being persisted") {
-                val command = CreateAccount("123", 0L)
+                val command = CreateAccount("123", -10L)
                 accountService.handle(command)
 
                 val event = eventLog.latest()
 
                 if (event is AccountCreated) {
                     assertThat(event.accountNumber).isEqualTo("123")
+                    assertThat(event.overdraftLimit).isEqualTo(-10L)
                 } else {
                     fail("last event wasn't an `AccountCreated`")
                 }

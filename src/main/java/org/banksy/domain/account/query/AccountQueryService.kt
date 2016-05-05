@@ -14,32 +14,38 @@ class AccountQueryService {
         bus.register(this)
     }
 
-    val repo = HashMap<String, AccountInfo>()
+    val accountRepo = HashMap<String, AccountInfo>()
 
     @Subscribe
     fun onAccountCreated(event: AccountCreated) {
         val accountNumber = event.accountNumber
         val overdraftLimit = event.overdraftLimit
-        repo[accountNumber] = AccountInfo(accountNumber, 0, overdraftLimit)
+        accountRepo[accountNumber] = AccountInfo(accountNumber, 0, overdraftLimit)
     }
 
     @Subscribe
     fun onAccountCredit(event: AccountCredited) {
         val accountNumber = event.accountNumber
-        val account: AccountInfo = repo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, account.balance + event.amount, account.overdraftLimit)
-        repo[accountNumber] = newAccount
+        val account: AccountInfo = accountRepo[accountNumber]!!
+        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        accountRepo[accountNumber] = newAccount
     }
 
     @Subscribe
     fun onAccountDebit(event: AccountDebited) {
         val accountNumber = event.accountNumber
-        val account: AccountInfo = repo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, account.balance - event.amount, account.overdraftLimit)
-        repo[accountNumber] = newAccount
+        val account: AccountInfo = accountRepo[accountNumber]!!
+        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        accountRepo[accountNumber] = newAccount
     }
 
     fun accountInfo(accountNumber: String): AccountInfo? {
-        return repo[accountNumber]
+        return accountRepo[accountNumber]
+    }
+
+    fun overdrawnAccounts(): Collection<AccountInfo> {
+        return accountRepo
+                .filterValues { accountInfo -> accountInfo.balance < 0 }
+                .values
     }
 }

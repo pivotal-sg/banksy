@@ -72,7 +72,7 @@ class DebitAccountSpec : KSpec(){
                 var (unused, success, errors) = accountService.handle(command)
 
                 assertThat(success).isFalse()
-                assertThat(errors).contains("Overdraft Limit Exceeded")
+                assertThat(errors).contains("Cannot exceed overdraft limit")
             }
 
             it("doesn't log a debited event when the overdraft limit would be exceeded") {

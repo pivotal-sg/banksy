@@ -23,7 +23,7 @@ class AccountAggregate {
     }
 
     private fun apply(accountCreated: AccountCreated) {
-        // TODO...
+        overdraftLimit = accountCreated.overdraftLimit
     }
 
     private fun apply(accountCredited: AccountCredited) {
@@ -31,14 +31,14 @@ class AccountAggregate {
     }
 
     private fun apply(accountDebited: AccountDebited) {
-        balance -= accountDebited.amount
+        balance = accountDebited.afterBalance
     }
 
     private fun apply(accountOverdraftLimitSet: AccountOverdraftLimitSet) {
         overdraftLimit = accountOverdraftLimitSet.overdraftLimit
     }
 
-    fun validate(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
+    fun validateAndGenerateEvents(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
         val accountNumber = command.accountNumber
         val amount = command.amount
         val accountDebitedDetails = AccountDebitedDetails(accountNumber, amount)
@@ -56,15 +56,15 @@ class AccountAggregate {
             return Pair(CommandResponse(
                     accountDebitedDetails,
                     false,
-                    listOf("Overdraft Limit Exceeded")),
+                    listOf("Cannot exceed overdraft limit")),
                     events)
         }
 
-        events.add(AccountDebited(accountNumber, amount))
+        events.add(AccountDebited(accountNumber, amount, balance, balance - amount))
         return Pair(CommandResponse(accountDebitedDetails, true), events)
     }
 
-    fun validate(command: SetAccountOverdraftLimit): Pair<CommandResponse<AccountOverdraftLimitSetDetails>, List<AccountEvent>> {
+    fun validateAndGenerateEvents(command: SetAccountOverdraftLimit): Pair<CommandResponse<AccountOverdraftLimitSetDetails>, List<AccountEvent>> {
         val (accountNumber, overdraftLimit) = command
         val accountOverdraftLimitSetDetails = AccountOverdraftLimitSetDetails(accountNumber, overdraftLimit)
 

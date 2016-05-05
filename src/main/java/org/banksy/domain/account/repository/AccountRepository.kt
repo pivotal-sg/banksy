@@ -1,6 +1,7 @@
 package org.banksy.domain.account.repository
 
 import org.banksy.domain.account.aggregate.AccountAggregate
+import org.banksy.domain.account.command.SetAccountOverdraftLimit
 import java.util.*
 
 class AccountRepository {

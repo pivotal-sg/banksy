@@ -31,13 +31,14 @@ class CreateAndViewSpec : KSpec() {
             }
 
             it("creates a viewable account") {
-                val accountCreateCommand = CreateAccount("123", 0L)
+                val accountCreateCommand = CreateAccount("123", -10L)
                 val accountQueryService = AccountQueryService(bus)
 
                 accountService.handle(accountCreateCommand)
 
-                val accountInfo: AccountInfo? = accountQueryService.accountInfo("123")
-                assertThat(accountInfo?.balance).isEqualTo(0)
+                val accountInfo = accountQueryService.accountInfo("123")!!
+                assertThat(accountInfo.balance).isEqualTo(0)
+                assertThat(accountInfo.overdraftLimit).isEqualTo(-10L)
             }
         }
     }
