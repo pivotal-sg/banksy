@@ -88,9 +88,11 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
     }
 
     private fun process(accountAggregate: AccountAggregate, events: List<AccountEvent>) {
-        events.forEach { event ->
-            eventLog.save(event)
-            accountAggregate.apply(event)
-        }
+        events.forEach { process(accountAggregate, it) }
+    }
+
+    private fun process(accountAggregate: AccountAggregate, event: AccountEvent) {
+        eventLog.save(event)
+        accountAggregate.apply(event)
     }
 }
