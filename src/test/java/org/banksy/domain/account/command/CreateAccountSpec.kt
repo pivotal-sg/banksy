@@ -1,8 +1,11 @@
 package org.banksy.domain.account.command
 
-import io.polymorphicpanda.kspec.*
+import io.polymorphicpanda.kspec.KSpec
+import io.polymorphicpanda.kspec.describe
+import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.repository.AccountRepository
@@ -26,7 +29,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("Successfully create an Account") {
-                val command = CreateAccount("123")
+                val command = CreateAccount("123", 0L)
                 val response = accountService.handle(command)
 
                 assertThat(response).isInstanceOf(CommandResponse::class.java)
@@ -34,7 +37,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("Fail to create an account with a blank accountNumber") {
-                val command = CreateAccount("")
+                val command = CreateAccount("", 0L)
                 val response = accountService.handle(command)
 
                 assertThat(response).isInstanceOf(CommandResponse::class.java)
@@ -42,7 +45,7 @@ class CreateAccountSpec: KSpec() {
             }
 
             it("create results in a AccountCreated event being persisted") {
-                val command = CreateAccount("123")
+                val command = CreateAccount("123", 0L)
                 accountService.handle(command)
 
                 val event = eventLog.latest()

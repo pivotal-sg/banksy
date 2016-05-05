@@ -1,6 +1,6 @@
 package org.banksy.domain.account.command
 
-data class CreateAccount(val accountNumber: String)
+data class CreateAccount(val accountNumber: String, val overdraftLimit: Long)
 
 data class CreditAccount(val accountNumber: String, val amount: Long)
 

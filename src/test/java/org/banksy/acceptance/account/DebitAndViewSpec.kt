@@ -22,7 +22,7 @@ class DebitAndViewSpec : KSpec() {
 
         describe("View correct balance from the account info query service") {
             val accountNumber = "123"
-            val createAccountCommand = CreateAccount(accountNumber)
+            val createAccountCommand = CreateAccount(accountNumber, 0L)
 
             val bus = EventBus()
             var eventLog = EventLog(bus)

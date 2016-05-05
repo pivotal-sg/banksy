@@ -4,7 +4,7 @@ package org.banksy.domain.account.event
 
 interface AccountEvent
 
-data class AccountCreated(val accountNumber: String) : AccountEvent
+data class AccountCreated(val accountNumber: String, val overdraftLimit: Long) : AccountEvent
 
 data class AccountCredited(val accountNumber: String, val amount: Long) : AccountEvent
 

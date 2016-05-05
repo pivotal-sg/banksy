@@ -27,10 +27,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
                     false,
                     listOf("Account number cannot be blank"))
         }
-        val newAccount = accountRepo.add(accountNumber)
-        val createdAccount = AccountCreated(accountNumber)
-        eventLog.save(createdAccount)
-        newAccount.apply(createdAccount)
+        val accountAggregate = accountRepo.add(accountNumber)
+        val event = AccountCreated(accountNumber, createAccountCommand.overdraftLimit)
+        eventLog.save(event)
+        accountAggregate.apply(event)
 
         return CommandResponse<AccountCreationDetails>(AccountCreationDetails(accountNumber) ,true)
     }

@@ -1,14 +1,12 @@
 package org.banksy.domain.account.command
 
 import com.google.common.eventbus.EventBus
-import io.polymorphicpanda.kspec.*
+import io.polymorphicpanda.kspec.KSpec
+import io.polymorphicpanda.kspec.describe
+import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
-import org.assertj.core.api.Assertions.*
-import org.banksy.domain.account.aggregate.AccountAggregate
-import org.banksy.domain.account.command.response.CommandResponse
-import org.banksy.domain.account.command.CreditAccount
-import org.banksy.domain.account.event.AccountCreated
-import org.banksy.domain.account.event.AccountCredited
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.fail
 import org.banksy.domain.account.event.AccountOverdraftLimitSet
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.domain.account.service.AccountService
@@ -22,7 +20,7 @@ class SetAccountOverdraftLimitSpec : KSpec(){
         describe("Setting overdraft limit") {
 
             val accountNumber = "123"
-            val createAccountCommand = CreateAccount(accountNumber)
+            val createAccountCommand = CreateAccount(accountNumber, 0L)
             val bus = EventBus()
 
             var accountRepo = AccountRepository()

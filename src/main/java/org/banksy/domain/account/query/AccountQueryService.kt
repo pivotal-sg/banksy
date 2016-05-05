@@ -19,26 +19,27 @@ class AccountQueryService {
     @Subscribe
     fun onAccountCreated(event: AccountCreated) {
         val accountNumber = event.accountNumber
-        repo.set(accountNumber, AccountInfo(accountNumber, 0))
+        val overdraftLimit = event.overdraftLimit
+        repo[accountNumber] = AccountInfo(accountNumber, 0, overdraftLimit)
     }
 
     @Subscribe
     fun onAccountCredit(event: AccountCredited) {
         val accountNumber = event.accountNumber
-        val account : AccountInfo? = repo.get(accountNumber)
-        val newAccount = AccountInfo(account!!.accountNumber, account!!.balance + event.amount)
-        repo.set(accountNumber, newAccount)
+        val account: AccountInfo = repo[accountNumber]!!
+        val newAccount = AccountInfo(account.accountNumber, account.balance + event.amount, account.overdraftLimit)
+        repo[accountNumber] = newAccount
     }
 
     @Subscribe
     fun onAccountDebit(event: AccountDebited) {
         val accountNumber = event.accountNumber
-        val account : AccountInfo? = repo.get(accountNumber)
-        val newAccount = AccountInfo(account!!.accountNumber, account!!.balance - event.amount)
-        repo.set(accountNumber, newAccount)
+        val account: AccountInfo = repo[accountNumber]!!
+        val newAccount = AccountInfo(account.accountNumber, account.balance - event.amount, account.overdraftLimit)
+        repo[accountNumber] = newAccount
     }
 
     fun accountInfo(accountNumber: String): AccountInfo? {
-        return repo.get(accountNumber)
+        return repo[accountNumber]
     }
 }

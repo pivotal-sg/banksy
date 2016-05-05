@@ -21,7 +21,7 @@ class CreditAndViewSpec : KSpec() {
 
         describe("Credit an account and then viewing it") {
             val accountNumber = "123"
-            val createAccountCommand = CreateAccount(accountNumber)
+            val createAccountCommand = CreateAccount(accountNumber, 0L)
 
             val bus = EventBus()
             var eventLog = EventLog(bus)

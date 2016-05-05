@@ -31,7 +31,7 @@ class CreateAndViewSpec : KSpec() {
             }
 
             it("creates a viewable account") {
-                val accountCreateCommand = CreateAccount("123")
+                val accountCreateCommand = CreateAccount("123", 0L)
                 val accountQueryService = AccountQueryService(bus)
 
                 accountService.handle(accountCreateCommand)

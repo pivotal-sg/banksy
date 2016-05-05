@@ -20,7 +20,7 @@ class CreditAccountSpec : KSpec(){
         describe("Crediting an account") {
 
             val accountNumber = "123"
-            val createAccountCommand = CreateAccount(accountNumber)
+            val createAccountCommand = CreateAccount(accountNumber, 0L)
             val bus = EventBus()
 
             var accountRepo = AccountRepository()
