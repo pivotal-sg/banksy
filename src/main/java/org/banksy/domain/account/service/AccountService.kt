@@ -18,17 +18,17 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      * When passed a Create command, persist the event to the event log,  apply it to
      * the newly created AccountAggregate (via AccountRepository)
      *
-     * @param createAccountCommand Create account command
+     * @param command Create account command
      */
-    fun handle(createAccountCommand: CreateAccount): CommandResponse<AccountCreationDetails> {
-        val accountNumber = createAccountCommand.accountNumber
+    fun handle(command: CreateAccount): CommandResponse<AccountCreationDetails> {
+        val accountNumber = command.accountNumber
         if (accountNumber.isBlank()) {
             return CommandResponse<AccountCreationDetails>(null,
                     false,
                     listOf("Account number cannot be blank"))
         }
         val accountAggregate = accountRepo.add(accountNumber)
-        val event = AccountCreated(accountNumber, createAccountCommand.overdraftLimit)
+        val event = AccountCreated(accountNumber, command.overdraftLimit)
         eventLog.save(event)
         accountAggregate.apply(event)
         accountRepo.save(accountNumber, accountAggregate)
@@ -40,11 +40,11 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      * When passed a Credit command, persist the event to the event log,  apply it to
      * the correct AccountAggregate (via AccountRepository.find)
      *
-     * @param creditAccountCommand Credit account command
+     * @param command Credit account command
      */
-    fun handle(creditAccountCommand: CreditAccount): CommandResponse<AccountCreditedDetails> {
-        val accountNumber = creditAccountCommand.accountNumber
-        val amount = creditAccountCommand.amount
+    fun handle(command: CreditAccount): CommandResponse<AccountCreditedDetails> {
+        val accountNumber = command.accountNumber
+        val amount = command.amount
         if (amount <= 0) {
            return CommandResponse<AccountCreditedDetails>(
                   AccountCreditedDetails(accountNumber, amount),
@@ -64,12 +64,12 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
      * When passed a Debit command, persist the event to the event log,  apply it to
      * the correct AccountAggregate (via AccountRepository)
      *
-     * @param debitAccountCommand Debit account command
+     * @param command Debit account command
      */
-    fun handle(debitAccountCommand: DebitAccount): CommandResponse<AccountDebitedDetails> {
-        val accountNumber = debitAccountCommand.accountNumber
+    fun handle(command: DebitAccount): CommandResponse<AccountDebitedDetails> {
+        val accountNumber = command.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validateAndGenerateEvents(debitAccountCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(command)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)
@@ -77,10 +77,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return response
     }
 
-    fun handle(setAccountOverdraftLimitCommand: SetAccountOverdraftLimit): CommandResponse<AccountOverdraftLimitSetDetails> {
-        val accountNumber = setAccountOverdraftLimitCommand.accountNumber
+    fun handle(command: SetAccountOverdraftLimit): CommandResponse<AccountOverdraftLimitSetDetails> {
+        val accountNumber = command.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validateAndGenerateEvents(setAccountOverdraftLimitCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(command)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)
@@ -88,10 +88,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return response
     }
 
-    fun handle(chargeInterestOnAccountCommand: ChargeInterestOnAccount): CommandResponse<AccountInterestChargedDetails> {
-        val accountNumber = chargeInterestOnAccountCommand.accountNumber
+    fun handle(command: ChargeInterestOnAccount): CommandResponse<AccountInterestChargedDetails> {
+        val accountNumber = command.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validateAndGenerateEvents(chargeInterestOnAccountCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(command)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)
@@ -99,10 +99,10 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return response
     }
 
-    fun handle(payInterestForAccountCommand: PayInterestForAccount): CommandResponse<AccountInterestPaidDetails> {
-        val accountNumber = payInterestForAccountCommand.accountNumber
+    fun handle(command: PayInterestForAccount): CommandResponse<AccountInterestPaidDetails> {
+        val accountNumber = command.accountNumber
         val accountAggregate = accountRepo.find(accountNumber)!!
-        val (response, events) = accountAggregate.validateAndGenerateEvents(payInterestForAccountCommand)
+        val (response, events) = accountAggregate.validateAndGenerateEvents(command)
 
         process(accountAggregate, events)
         accountRepo.save(accountNumber, accountAggregate)
