@@ -8,12 +8,12 @@ open class AccountEvent(val createdAt : Date = Date(), val eventId : UUID = UUID
 
 class AccountCreated(val accountNumber: String, val overdraftLimit: Long) : AccountEvent()
 
-class AccountCredited(val accountNumber: String, val amount: Long, val beforeBalance: Long, val afterBalance: Long) : AccountEvent()
+class AccountCredited(val accountNumber: String, val amount: Long, val openingBalance: Long, val closingBalance: Long) : AccountEvent()
 
-class AccountDebited(val accountNumber: String, val amount: Long, val beforeBalance: Long, val afterBalance: Long) : AccountEvent()
+class AccountDebited(val accountNumber: String, val amount: Long, val openingBalance: Long, val closingBalance: Long) : AccountEvent()
 
 class AccountOverdraftLimitSet(val accountNumber: String, val overdraftLimit: Long) : AccountEvent()
 
-class AccountInterestCharged(val accountNumber: String, val interestPercent: BigDecimal, val afterBalance: Long) : AccountEvent()
+class AccountInterestCharged(val accountNumber: String, val overdraftInterestRate: BigDecimal, val closingBalance: Long) : AccountEvent()
 
-class AccountInterestPaid(val accountNumber: String, val interestRate: BigDecimal, val afterBalance: Long) : AccountEvent()
+class AccountInterestPaid(val accountNumber: String, val interestRate: BigDecimal, val closingBalance: Long) : AccountEvent()

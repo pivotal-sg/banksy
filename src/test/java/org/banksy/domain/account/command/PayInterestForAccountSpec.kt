@@ -45,7 +45,7 @@ class PayInterestForAccountSpec : KSpec() {
                 if (lastEvent is AccountInterestPaid) {
                     assertThat(lastEvent.accountNumber).isEqualTo(accountNumber)
                     assertThat(lastEvent.interestRate).isEqualTo(BigDecimal(0.1))
-                    assertThat(lastEvent.afterBalance).isEqualTo(11)
+                    assertThat(lastEvent.closingBalance).isEqualTo(11)
                 } else {
                     fail("lastEvent wasn't `AccountInterestCharged`")
                 }
@@ -72,13 +72,13 @@ class PayInterestForAccountSpec : KSpec() {
                 val response = accountService.handle(debitToNothing)
                 assertThat(response.success).isTrue()
 
-                val interestPercent = BigDecimal(0.01)
-                val command = PayInterestForAccount(accountNumber, interestPercent)
+                val interestRate = BigDecimal(0.01)
+                val command = PayInterestForAccount(accountNumber, interestRate)
 
                 var (details, success, errors) = accountService.handle(command)
                 assertThat(success).isFalse()
                 assertThat(details?.accountNumber).isEqualTo(accountNumber)
-                assertThat(details?.interestRate).isCloseTo(interestPercent, within(BigDecimal(0.00001)))
+                assertThat(details?.interestRate).isCloseTo(interestRate, within(BigDecimal(0.00001)))
                 assertThat(errors).containsOnly("Can only pay for accounts with positive balance")
             }
 
@@ -87,16 +87,15 @@ class PayInterestForAccountSpec : KSpec() {
                 val response = accountService.handle(debitToNegativeBalance)
                 assertThat(response.success).isTrue()
 
-                val interestPercent = BigDecimal(0.01)
-                val command = PayInterestForAccount(accountNumber, interestPercent)
+                val interestRate = BigDecimal(0.01)
+                val command = PayInterestForAccount(accountNumber, interestRate)
 
                 var (details, success, errors) = accountService.handle(command)
                 assertThat(success).isFalse()
                 assertThat(details?.accountNumber).isEqualTo(accountNumber)
-                assertThat(details?.interestRate).isCloseTo(interestPercent, within(BigDecimal(0.00001)))
+                assertThat(details?.interestRate).isCloseTo(interestRate, within(BigDecimal(0.00001)))
                 assertThat(errors).containsOnly("Can only pay for accounts with positive balance")
             }
         }
     }
 }
-

@@ -27,11 +27,11 @@ class AccountAggregate {
     }
 
     private fun apply(accountCredited: AccountCredited) {
-        balance = accountCredited.afterBalance
+        balance = accountCredited.closingBalance
     }
 
     private fun apply(accountDebited: AccountDebited) {
-        balance = accountDebited.afterBalance
+        balance = accountDebited.closingBalance
     }
 
     private fun apply(accountOverdraftLimitSet: AccountOverdraftLimitSet) {
@@ -39,7 +39,7 @@ class AccountAggregate {
     }
 
     private fun apply(accountInterestCharged: AccountInterestCharged) {
-        balance = accountInterestCharged.afterBalance
+        balance = accountInterestCharged.closingBalance
     }
 
     fun validateAndGenerateEvents(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
@@ -78,13 +78,13 @@ class AccountAggregate {
     }
 
     fun validateAndGenerateEvents(command: ChargeInterestOnAccount): Pair<CommandResponse<AccountInterestChargedDetails>, List<AccountEvent>> {
-        val (accountNumber, interestPercent) = command
-        val afterBalance = computeAfterBalanceWithInterest(interestPercent)
+        val (accountNumber, overdraftInterestRate) = command
+        val closingBalance = computeClosingBalanceWithInterest(overdraftInterestRate)
 
-        val accountInterestChargedDetails = AccountInterestChargedDetails(accountNumber, interestPercent)
+        val accountInterestChargedDetails = AccountInterestChargedDetails(accountNumber, overdraftInterestRate)
         val events = ArrayList<AccountEvent>()
 
-        if (interestPercent <= BigDecimal.ZERO) {
+        if (overdraftInterestRate <= BigDecimal.ZERO) {
             return Pair(CommandResponse(
                     accountInterestChargedDetails,
                     false,
@@ -92,19 +92,19 @@ class AccountAggregate {
                     events)
         }
 
-        events.add(AccountInterestCharged(accountNumber, interestPercent, afterBalance))
+        events.add(AccountInterestCharged(accountNumber, overdraftInterestRate, closingBalance))
         return Pair(CommandResponse(accountInterestChargedDetails, true), events)
     }
 
-    private fun computeAfterBalanceWithInterest(interestPercent: BigDecimal): Long {
-        val afterBalancePercent = interestPercent.add(BigDecimal.ONE)
-        val afterBalance = afterBalancePercent * BigDecimal(balance)
-        return afterBalance.round(MathContext.DECIMAL64).toLong()
+    private fun computeClosingBalanceWithInterest(overdraftInterestRate: BigDecimal): Long {
+        val closingBalancePercent = overdraftInterestRate.add(BigDecimal.ONE)
+        val closingBalance = closingBalancePercent * BigDecimal(balance)
+        return closingBalance.round(MathContext.DECIMAL64).toLong()
     }
 
     fun validateAndGenerateEvents(command: PayInterestForAccount): Pair<CommandResponse<AccountInterestPaidDetails>, List<AccountEvent>> {
         val (accountNumber, interestRate) = command
-        val afterBalance = computeAfterBalanceWithInterest(interestRate)
+        val closingBalance = computeClosingBalanceWithInterest(interestRate)
 
         val accountInterestPaidDetails = AccountInterestPaidDetails(accountNumber, interestRate)
         val events = ArrayList<AccountEvent>()
@@ -125,9 +125,7 @@ class AccountAggregate {
                     events)
         }
 
-        events.add(AccountInterestPaid(accountNumber, interestRate, afterBalance))
+        events.add(AccountInterestPaid(accountNumber, interestRate, closingBalance))
         return Pair(CommandResponse(accountInterestPaidDetails, true), events)
     }
 }
-
-

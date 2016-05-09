@@ -45,8 +45,8 @@ class ChargeInterestOnAccountSpec : KSpec(){
 
                 if (lastEvent is AccountInterestCharged) {
                     assertThat(lastEvent.accountNumber).isEqualTo(accountNumber)
-                    assertThat(lastEvent.interestPercent).isEqualTo(BigDecimal(0.1))
-                    assertThat(lastEvent.afterBalance).isEqualTo(-11)
+                    assertThat(lastEvent.overdraftInterestRate).isEqualTo(BigDecimal(0.1))
+                    assertThat(lastEvent.closingBalance).isEqualTo(-11)
                 } else {
                     fail("lastEvent wasn't `AccountInterestCharged`")
                 }
@@ -65,16 +65,15 @@ class ChargeInterestOnAccountSpec : KSpec(){
                 val response = accountService.handle(debitToOverdraftLimit)
                 assertThat(response.success).isTrue()
 
-                val interestPercent = BigDecimal(0.01)
-                val command = ChargeInterestOnAccount(accountNumber, interestPercent)
+                val overdraftInterestRate = BigDecimal(0.01)
+                val command = ChargeInterestOnAccount(accountNumber, overdraftInterestRate)
 
                 var (details, success, errors) = accountService.handle(command)
                 assertThat(success).isTrue()
                 assertThat(details?.accountNumber).isEqualTo(accountNumber)
-                assertThat(details?.interestPercent).isCloseTo(interestPercent, within(BigDecimal(0.00001)))
+                assertThat(details?.overdraftInterestRate).isCloseTo(overdraftInterestRate, within(BigDecimal(0.00001)))
                 assertThat(errors).isEmpty()
             }
        }
     }
 }
-

@@ -12,6 +12,6 @@ data class AccountDebitedDetails (val accountNumber: String, val amount: Long, v
 
 data class AccountOverdraftLimitSetDetails (val accountNumber: String, val overdraftLimit: Long, val errors: List<String> = listOf())
 
-data class AccountInterestChargedDetails(val accountNumber: String, val interestPercent: BigDecimal, val errors: List<String> = listOf())
+data class AccountInterestChargedDetails(val accountNumber: String, val overdraftInterestRate: BigDecimal, val errors: List<String> = listOf())
 
 data class AccountInterestPaidDetails(val accountNumber: String, val interestRate: BigDecimal, val errors: List<String> = listOf())

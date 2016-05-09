@@ -10,8 +10,6 @@ data class DebitAccount(val accountNumber: String, val amount: Long)
 
 data class SetAccountOverdraftLimit(val accountNumber: String, val overdraftLimit: Long)
 
-// TODO: create application level configured value for interest and rename interestPercent to overdraftInterestRate
-//       other passable naming ideas are: overdraftPenaltyRate or penaltyRate
-data class ChargeInterestOnAccount(val accountNumber: String, val interestPercent: BigDecimal)
+data class ChargeInterestOnAccount(val accountNumber: String, val overdraftInterestRate: BigDecimal)
 
 data class PayInterestForAccount(val accountNumber: String, val interestRate: BigDecimal)

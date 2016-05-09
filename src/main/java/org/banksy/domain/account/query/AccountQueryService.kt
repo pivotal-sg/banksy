@@ -25,7 +25,7 @@ class AccountQueryService {
     fun onAccountCredit(event: AccountCredited) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        val newAccount = AccountInfo(account.accountNumber, event.closingBalance, account.overdraftLimit)
         accountRepo[accountNumber] = newAccount
     }
 
@@ -33,7 +33,7 @@ class AccountQueryService {
     fun onAccountDebit(event: AccountDebited) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        val newAccount = AccountInfo(account.accountNumber, event.closingBalance, account.overdraftLimit)
         accountRepo[accountNumber] = newAccount
     }
 
@@ -41,7 +41,7 @@ class AccountQueryService {
     fun onAccountInterestCharged(event: AccountInterestCharged) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        val newAccount = AccountInfo(account.accountNumber, event.closingBalance, account.overdraftLimit)
         accountRepo[accountNumber] = newAccount
     }
 
@@ -49,7 +49,7 @@ class AccountQueryService {
     fun onAccountInterestPaid(event: AccountInterestPaid) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        val newAccount = AccountInfo(account.accountNumber, event.closingBalance, account.overdraftLimit)
         accountRepo[accountNumber] = newAccount
     }
 
