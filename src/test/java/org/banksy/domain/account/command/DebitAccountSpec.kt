@@ -54,12 +54,12 @@ class DebitAccountSpec : KSpec(){
                 }
             }
 
-            it("don't accept no negative debit amounts") {
+            it("don't accept negative debit amounts") {
                 val command = DebitAccount(accountNumber, -1)
                 assertThat(accountService.handle(command).success).isFalse()
             }
 
-            it("don't accept no zero debit amounts") {
+            it("don't accept zero debit amounts") {
                 val command = DebitAccount(accountNumber, 0)
 
                 assertThat(accountService.handle(command).success).isFalse()

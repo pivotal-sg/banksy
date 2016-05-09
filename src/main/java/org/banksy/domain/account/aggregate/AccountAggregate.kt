@@ -1,11 +1,10 @@
 package org.banksy.domain.account.aggregate
 
-import org.banksy.domain.account.command.AccountDebitedDetails
-import org.banksy.domain.account.command.AccountOverdraftLimitSetDetails
-import org.banksy.domain.account.command.DebitAccount
-import org.banksy.domain.account.command.SetAccountOverdraftLimit
+import org.banksy.domain.account.command.*
 import org.banksy.domain.account.command.response.CommandResponse
 import org.banksy.domain.account.event.*
+import java.math.BigDecimal
+import java.math.MathContext
 import java.util.*
 
 class AccountAggregate {
@@ -19,6 +18,7 @@ class AccountAggregate {
             is AccountCredited -> apply(accountEvent)
             is AccountDebited -> apply(accountEvent)
             is AccountOverdraftLimitSet -> apply(accountEvent)
+            is AccountInterestCharged -> apply(accountEvent)
         }
     }
 
@@ -36,6 +36,10 @@ class AccountAggregate {
 
     private fun apply(accountOverdraftLimitSet: AccountOverdraftLimitSet) {
         overdraftLimit = accountOverdraftLimitSet.overdraftLimit
+    }
+
+    private fun apply(accountInterestCharged: AccountInterestCharged) {
+        balance += accountInterestCharged.interestCharged.round(MathContext.DECIMAL64).toLong()
     }
 
     fun validateAndGenerateEvents(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
@@ -71,6 +75,24 @@ class AccountAggregate {
         val events = ArrayList<AccountEvent>()
         events.add(AccountOverdraftLimitSet(accountNumber, overdraftLimit))
         return Pair(CommandResponse(accountOverdraftLimitSetDetails, true), events)
+    }
+
+    fun validateAndGenerateEvents(command: ChargeInterestOnAccount): Pair<CommandResponse<AccountInterestChargedDetails>, List<AccountEvent>> {
+        val (accountNumber, interestPercent) = command
+        val interestCharged = interestPercent * BigDecimal(balance)
+        val accountInterestChargedDetails = AccountInterestChargedDetails(accountNumber, interestCharged)
+        val events = ArrayList<AccountEvent>()
+
+        if (interestPercent <= BigDecimal.ZERO) {
+            return Pair(CommandResponse(
+                    accountInterestChargedDetails,
+                    false,
+                    listOf("Can only charge a positive interest percent amount")),
+                    events)
+        }
+
+        events.add(AccountInterestCharged(accountNumber, interestPercent, interestCharged))
+        return Pair(CommandResponse(accountInterestChargedDetails, true), events)
     }
 }
 

@@ -1,5 +1,6 @@
 package org.banksy.domain.account.event
 
+import java.math.BigDecimal
 import java.util.*
 
 // Use the naming convention of noun with past tense verb for Events
@@ -12,3 +13,5 @@ class AccountCredited(val accountNumber: String, val amount: Long, val beforeBal
 class AccountDebited(val accountNumber: String, val amount: Long, val beforeBalance: Long, val afterBalance: Long) : AccountEvent()
 
 class AccountOverdraftLimitSet(val accountNumber: String, val overdraftLimit: Long) : AccountEvent()
+
+class AccountInterestCharged(val accountNumber: String, val interestPercent: BigDecimal, val interestCharged: BigDecimal) : AccountEvent()

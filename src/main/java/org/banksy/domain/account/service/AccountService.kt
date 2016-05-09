@@ -8,6 +8,7 @@ import org.banksy.domain.account.event.AccountCredited
 import org.banksy.domain.account.event.AccountEvent
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.eventlog.EventLog
+import java.math.BigDecimal
 
 /**
  * Handles Account commands and events, ensuring that AccountAggregates are up to date.
@@ -88,6 +89,17 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         return response
     }
 
+    fun handle(chargeInterestOnAccountCommand: ChargeInterestOnAccount): CommandResponse<AccountInterestChargedDetails> {
+        val accountNumber = chargeInterestOnAccountCommand.accountNumber
+        val accountAggregate = accountRepo.find(accountNumber)!!
+        val (response, events) = accountAggregate.validateAndGenerateEvents(chargeInterestOnAccountCommand)
+
+        process(accountAggregate, events)
+        accountRepo.save(accountNumber, accountAggregate)
+
+        return response
+    }
+
     private fun process(accountAggregate: AccountAggregate, events: List<AccountEvent>) {
         events.forEach { process(accountAggregate, it) }
     }
@@ -97,3 +109,4 @@ class AccountService (var accountRepo: AccountRepository, var eventLog: EventLog
         accountAggregate.apply(event)
     }
 }
+
