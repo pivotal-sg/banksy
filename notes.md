@@ -1,11 +1,11 @@
 EventSourcing (our take on ES!) ... some notes on architecture ...
 
 - An aggregate is a representations of an entity, or group of tightly interrelated entities.
-- ~~Aggregates may publish events (not dispatch commands)~~ UNTRUE - Aggregates do NOT publish events
-- dispatcher of a Command receives a CommandResult<T>
-- Event Publishing does NOT generate an EventResult<T>
-- Communication directly between Aggregates IS ILLEGAL!
+- dispatcher of a Command receives a CommandResponse<T>
+- There should be no communication directly between Aggregates
 - Aggregates apply events after publishing them to the Event Log
+- Aggregates verify commands and generate events (this is a violation of SRP)
+- Verification of commands and generation of relevant events should be managed by?!?
 
 # Major components
 
@@ -96,11 +96,11 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
     - [x] Validate debits are within overdraft limit
     - [x] Fix application and validation via aggregate
 
-- [ ] AccountEvent superclass
+- [x] AccountEvent superclass
     - [x] has a uuid
     - [x] has a created at datetime
 
-- [ ] DRY business logic
+- [x] DRY business logic
     - [x] Debit logic is done in one place only
     - [x] Credit logic is done in one place only
 
