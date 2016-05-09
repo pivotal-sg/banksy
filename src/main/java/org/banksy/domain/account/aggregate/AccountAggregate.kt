@@ -27,8 +27,7 @@ class AccountAggregate {
     }
 
     private fun apply(accountCredited: AccountCredited) {
-        // TODO: set afterBalance instead
-        balance += accountCredited.amount
+        balance = accountCredited.afterBalance
     }
 
     private fun apply(accountDebited: AccountDebited) {
