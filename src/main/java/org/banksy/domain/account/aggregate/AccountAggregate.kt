@@ -101,6 +101,33 @@ class AccountAggregate {
         val afterBalance = afterBalancePercent * BigDecimal(balance)
         return afterBalance.round(MathContext.DECIMAL64).toLong()
     }
+
+    fun validateAndGenerateEvents(command: PayInterestForAccount): Pair<CommandResponse<AccountInterestPaidDetails>, List<AccountEvent>> {
+        val (accountNumber, interestRate) = command
+        val afterBalance = computeAfterBalanceWithInterest(interestRate)
+
+        val accountInterestPaidDetails = AccountInterestPaidDetails(accountNumber, interestRate)
+        val events = ArrayList<AccountEvent>()
+
+        if (interestRate <= BigDecimal.ZERO) {
+            return Pair(CommandResponse(
+                    accountInterestPaidDetails,
+                    false,
+                    listOf("Can only pay a positive interest percent amount")),
+                    events)
+        }
+
+        if (balance <= 0) {
+            return Pair(CommandResponse(
+                    accountInterestPaidDetails,
+                    false,
+                    listOf("Can only pay for accounts with positive balance")),
+                    events)
+        }
+
+        events.add(AccountInterestPaid(accountNumber, interestRate, afterBalance))
+        return Pair(CommandResponse(accountInterestPaidDetails, true), events)
+    }
 }
 
 

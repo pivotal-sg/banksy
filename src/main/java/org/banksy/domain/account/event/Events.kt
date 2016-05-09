@@ -15,3 +15,5 @@ class AccountDebited(val accountNumber: String, val amount: Long, val beforeBala
 class AccountOverdraftLimitSet(val accountNumber: String, val overdraftLimit: Long) : AccountEvent()
 
 class AccountInterestCharged(val accountNumber: String, val interestPercent: BigDecimal, val afterBalance: Long) : AccountEvent()
+
+class AccountInterestPaid(val accountNumber: String, val interestRate: BigDecimal, val afterBalance: Long) : AccountEvent()

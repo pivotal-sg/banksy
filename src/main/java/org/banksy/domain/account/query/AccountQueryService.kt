@@ -2,10 +2,7 @@ package org.banksy.domain.account.query
 
 import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
-import org.banksy.domain.account.event.AccountCreated
-import org.banksy.domain.account.event.AccountCredited
-import org.banksy.domain.account.event.AccountDebited
-import org.banksy.domain.account.event.AccountInterestCharged
+import org.banksy.domain.account.event.*
 import java.util.*
 
 
@@ -42,6 +39,14 @@ class AccountQueryService {
 
     @Subscribe
     fun onAccountInterestCharged(event: AccountInterestCharged) {
+        val accountNumber = event.accountNumber
+        val account: AccountInfo = accountRepo[accountNumber]!!
+        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
+        accountRepo[accountNumber] = newAccount
+    }
+
+    @Subscribe
+    fun onAccountInterestPaid(event: AccountInterestPaid) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
         val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)

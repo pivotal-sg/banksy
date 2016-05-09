@@ -114,6 +114,7 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
         - [ ] only charge once per month / per account
     - [ ] Pay annual interest on funds in credit (at EOM)
         - [x] get all accounts which are in credit
+        - [x] implement command, handler, validator, event and generator
         - [ ] trigger command using Spring batch
         - [ ] only credit once per month / per account
 
