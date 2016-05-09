@@ -27,6 +27,7 @@ class AccountAggregate {
     }
 
     private fun apply(accountCredited: AccountCredited) {
+        // TODO: set afterBalance instead
         balance += accountCredited.amount
     }
 
@@ -39,7 +40,7 @@ class AccountAggregate {
     }
 
     private fun apply(accountInterestCharged: AccountInterestCharged) {
-        balance += accountInterestCharged.interestCharged.round(MathContext.DECIMAL64).toLong()
+        balance = accountInterestCharged.afterBalance
     }
 
     fun validateAndGenerateEvents(command: DebitAccount): Pair<CommandResponse<AccountDebitedDetails>, List<AccountEvent>> {
@@ -79,8 +80,9 @@ class AccountAggregate {
 
     fun validateAndGenerateEvents(command: ChargeInterestOnAccount): Pair<CommandResponse<AccountInterestChargedDetails>, List<AccountEvent>> {
         val (accountNumber, interestPercent) = command
-        val interestCharged = interestPercent * BigDecimal(balance)
-        val accountInterestChargedDetails = AccountInterestChargedDetails(accountNumber, interestCharged)
+        val afterBalance = computeAfterBalanceWithInterest(interestPercent)
+
+        val accountInterestChargedDetails = AccountInterestChargedDetails(accountNumber, interestPercent)
         val events = ArrayList<AccountEvent>()
 
         if (interestPercent <= BigDecimal.ZERO) {
@@ -91,8 +93,14 @@ class AccountAggregate {
                     events)
         }
 
-        events.add(AccountInterestCharged(accountNumber, interestPercent, interestCharged))
+        events.add(AccountInterestCharged(accountNumber, interestPercent, afterBalance))
         return Pair(CommandResponse(accountInterestChargedDetails, true), events)
+    }
+
+    private fun computeAfterBalanceWithInterest(interestPercent: BigDecimal): Long {
+        val afterBalancePercent = interestPercent.add(BigDecimal.ONE)
+        val afterBalance = afterBalancePercent * BigDecimal(balance)
+        return afterBalance.round(MathContext.DECIMAL64).toLong()
     }
 }
 

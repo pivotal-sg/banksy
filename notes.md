@@ -109,7 +109,7 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
         - [x] set account overdraft limit - command/event?
         - [x] get all accounts which are overdrawn (ie. negative balance)
         - [x] implement command, handler, validator, event and generator
-        - [ ] make application of updated balance consistent with debit / credit event style
+        - [x] make application of updated balance consistent with debit / credit event style
         - [ ] trigger command using Spring batch
         - [ ] only charge once per month / per account
     - [ ] Pay annual interest on funds in credit (at EOM)

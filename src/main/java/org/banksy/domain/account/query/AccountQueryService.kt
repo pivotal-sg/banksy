@@ -6,7 +6,6 @@ import org.banksy.domain.account.event.AccountCreated
 import org.banksy.domain.account.event.AccountCredited
 import org.banksy.domain.account.event.AccountDebited
 import org.banksy.domain.account.event.AccountInterestCharged
-import java.math.BigDecimal
 import java.util.*
 
 
@@ -45,7 +44,7 @@ class AccountQueryService {
     fun onAccountInterestCharged(event: AccountInterestCharged) {
         val accountNumber = event.accountNumber
         val account: AccountInfo = accountRepo[accountNumber]!!
-        val newAccount = AccountInfo(account.accountNumber, event.interestCharged.add(BigDecimal(account.balance)).toLong(), account.overdraftLimit)
+        val newAccount = AccountInfo(account.accountNumber, event.afterBalance, account.overdraftLimit)
         accountRepo[accountNumber] = newAccount
     }
 

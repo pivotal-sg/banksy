@@ -6,9 +6,6 @@ import io.polymorphicpanda.kspec.describe
 import io.polymorphicpanda.kspec.it
 import io.polymorphicpanda.kspec.junit.JUnitKSpecRunner
 import org.assertj.core.api.Assertions.*
-import org.assertj.core.data.Percentage
-import org.banksy.domain.account.event.AccountDebited
-import org.banksy.domain.account.event.AccountEvent
 import org.banksy.domain.account.event.AccountInterestCharged
 import org.banksy.domain.account.repository.AccountRepository
 import org.banksy.domain.account.service.AccountService
@@ -49,7 +46,7 @@ class ChargeInterestOnAccountSpec : KSpec(){
                 if (lastEvent is AccountInterestCharged) {
                     assertThat(lastEvent.accountNumber).isEqualTo(accountNumber)
                     assertThat(lastEvent.interestPercent).isEqualTo(BigDecimal(0.1))
-                    assertThat(lastEvent.interestCharged).isCloseTo(-BigDecimal.ONE, within(BigDecimal(0.00001)))
+                    assertThat(lastEvent.afterBalance).isEqualTo(-11)
                 } else {
                     fail("lastEvent wasn't `AccountInterestCharged`")
                 }
@@ -68,12 +65,14 @@ class ChargeInterestOnAccountSpec : KSpec(){
                 val response = accountService.handle(debitToOverdraftLimit)
                 assertThat(response.success).isTrue()
 
-                val command = ChargeInterestOnAccount(accountNumber, BigDecimal(0.01))
+                val interestPercent = BigDecimal(0.01)
+                val command = ChargeInterestOnAccount(accountNumber, interestPercent)
 
                 var (details, success, errors) = accountService.handle(command)
                 assertThat(success).isTrue()
                 assertThat(details?.accountNumber).isEqualTo(accountNumber)
-                assertThat(details?.interestCharged).isCloseTo(-BigDecimal.ONE, within(BigDecimal(0.00001)))
+                assertThat(details?.interestPercent).isCloseTo(interestPercent, within(BigDecimal(0.00001)))
+                assertThat(errors).isEmpty()
             }
        }
     }
