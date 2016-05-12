@@ -47,7 +47,6 @@ EventSourcing (our take on ES!) ... some notes on architecture ...
 - **QueryDispatcher**
     - Resposibilities
         - (read side of Query system)
-        -
     - Collaborators
         - (future role) Projections (a variety of queryable datasets)
 
